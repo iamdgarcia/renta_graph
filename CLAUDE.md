@@ -53,17 +53,31 @@ RentaGraph is an LLM-powered knowledge base for the Spanish "Declaración de la 
 
 ## Development Commands
 
-> Commands will be added here as the project is scaffolded. Expected patterns:
-
 ```bash
-# Python compiler (from /compiler or /scraper)
-pip install -r requirements.txt
-python scraper/main.py          # download/scrape source docs
-python compiler/main.py         # run LLM compilation → /content/wiki/
+# Python pipeline — always run from repo root
+pip install -r scraper/requirements.txt
+pip install -r compiler/requirements.txt
+python pipeline.py scrape            # download AEAT PDF + BOE pages → raw/
+python pipeline.py compile           # parse + LLM compile → app/content/wiki/
+python pipeline.py compile --force   # overwrite existing articles
+python pipeline.py all               # scrape + compile in one step
 
-# Next.js app (from /app)
-npm install
-npm run dev                     # local dev server
-npm run build                   # production build
-npm run lint                    # ESLint
+# Next.js web app (from app/)
+cd app
+npm run dev      # local dev server → http://localhost:3000
+npm run build    # production build (must pass before commits)
+npm run lint     # ESLint
 ```
+
+## Key Technical Notes
+
+- **AI SDK version:** `ai@6.x` + `@ai-sdk/react@3.x`. Breaking changes vs older versions:
+  - `useChat` from `@ai-sdk/react` uses `DefaultChatTransport` + `sendMessage({ text })` — no `handleSubmit`/`input` props
+  - `UIMessage` uses `parts: UIMessagePart[]` (not `content: string`) — extract text with `parts.filter(p => p.type === 'text')`
+  - `streamText` response: `.toUIMessageStreamResponse()` (not `.toDataStreamResponse()`)
+  - `tool()` uses `inputSchema` (not `parameters`)
+  - `convertToModelMessages()` is `async` (returns `Promise<ModelMessage[]>`)
+  - `maxSteps` replaced by `stopWhen: stepCountIs(N)`
+- **Tailwind version:** v4 — config lives in `app/globals.css` (`@import`, `@plugin`, `@theme`), no `tailwind.config.ts`
+- **Wiki path:** `app/content/wiki/` — inside the Next.js project root so Vercel includes it automatically
+- **Git:** All git commands must run from repo root (`/home/developer/proyectos/renta_graph`), not from inside `app/`
