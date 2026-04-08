@@ -1,4 +1,3 @@
-import argparse
 from compiler.parser import parse_all
 from compiler.llm import compile_wiki
 from compiler.index_builder import build_index
