@@ -39,9 +39,8 @@ Contenido:
 
 
 def slugify(title: str) -> str:
-    """Convert a title to a safe filename."""
-    # Keep Spanish characters, replace unsafe chars with spaces
-    safe = re.sub(r'[<>:"/\\|?*]', ' ', title)
+    """Convert a title to a safe filename (no path separators or shell-unsafe chars)."""
+    safe = re.sub(r'[<>:"/\\|?*\n\r\x00/]', ' ', title)
     return safe.strip()
 
 
@@ -58,11 +57,19 @@ def compile_wiki(force: bool = False):
     for parsed_file in parsed_files:
         source_name = parsed_file.stem
         # Determine a plausible source URL based on the filename
-        if "manual_renta" in source_name:
+        if source_name.startswith("manual_renta"):
             source_url = "https://www.agenciatributaria.es/AEAT.internet/Inicio/La_Agencia_Tributaria/Campanas/Renta/Renta.shtml"
         elif "boe_" in source_name:
+            # Map region slugs back to the numeric page URLs used by scraper/boe.py
+            _boe_url_map = {
+                "madrid": "c16-1",
+                "cataluna": "c16-2",
+                "andalucia": "c16-3",
+                "valencia": "c16-4",
+            }
             region = source_name.replace("boe_", "")
-            source_url = f"https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2024/c16/{region}.html"
+            page = _boe_url_map.get(region, region)
+            source_url = f"https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2024/c16/{page}.html"
         else:
             source_url = "https://www.agenciatributaria.es"
 

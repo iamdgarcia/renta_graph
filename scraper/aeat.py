@@ -8,7 +8,7 @@ AEAT_PDF_URL = (
     "https://www.agenciatributaria.es/static_files/AEAT_Sede/"
     "Ayuda/Manual_Practico_Renta_2024/Manual_Practico_Renta_2024.pdf"
 )
-OUTPUT_PATH = "raw/manual_renta_2025.pdf"
+OUTPUT_PATH = "raw/manual_renta_2024.pdf"  # fiscal year 2024; update filename with URL each year
 
 
 def download_manual_renta():
