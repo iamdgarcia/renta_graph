@@ -2,14 +2,8 @@
 
 Este índice es mantenido automáticamente por el compilador. Lista todos los artículos disponibles con un resumen de una línea.
 
-## Conceptos Generales
+## Otros
 
-- [[Base Imponible]] — La suma de todos los rendimientos e imputaciones de renta del contribuyente; se divide en base general y base del ahorro.
-
-## Inversiones y Activos Digitales
-
-- [[Criptomonedas]] — Las criptomonedas tributan como ganancias patrimoniales en la base del ahorro; cada venta o intercambio genera un hecho imponible calculado con el método FIFO.
-
-## Deducciones Autonómicas
-
-- [[Deducción Alquiler Madrid]] — La Comunidad de Madrid permite deducir el 30% del alquiler de vivienda habitual, hasta un máximo de 1.000 € (o 1.500 € para menores de 35 años), sujeto a límites de renta.
+- [[Base Imponible]] — La base imponible del IRPF es la suma de todos los rendimientos netos y las imputaciones de renta que constituyen la renta del contribuyente durante e...
+- [[Deducción por Alquiler de Vivienda Habitual en Madrid]] — La Comunidad de Madrid establece una deducción autonómica del 30% sobre las cantidades satisfechas por el arrendamiento de la vivienda habitual, con u...
+- [[Tributación de Criptomonedas en el IRPF]] — Las criptomonedas (Bitcoin, Ethereum, etc.) tributan en el IRPF como ganancias o pérdidas patrimoniales en la base imponible del ahorro cuando se prod...
