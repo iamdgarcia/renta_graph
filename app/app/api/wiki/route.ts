@@ -6,12 +6,12 @@ export const runtime = 'nodejs'
 export async function GET(request: NextRequest) {
   const file = request.nextUrl.searchParams.get('file')
 
-  if (!file) {
-    const files = await listWikiFiles()
-    return Response.json(files)
-  }
-
   try {
+    if (!file) {
+      const files = await listWikiFiles()
+      return Response.json(files)
+    }
+
     const content = await readWikiPage(file)
     return new Response(content, {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
