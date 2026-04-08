@@ -47,6 +47,10 @@ RentaGraph is an LLM-powered knowledge base for the Spanish "Declaración de la 
 - The compiler runs locally or via GitHub Actions — it is never triggered by web traffic.
 - Regional deductions (Normativa Autonómica) come from BOE scraping, not just AEAT.
 
+## Commit Style
+
+- Do NOT add "Co-Authored-By" trailers to commit messages.
+
 ## Development Commands
 
 > Commands will be added here as the project is scaffolded. Expected patterns:

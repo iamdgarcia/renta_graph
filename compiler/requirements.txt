@@ -1,0 +1,5 @@
+instructor
+openai
+pyyaml
+python-frontmatter
+markitdown[pdf]
