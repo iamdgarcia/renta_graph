@@ -1,0 +1,44 @@
+[
+  {
+    "id": "alquiler-madrid",
+    "title": "Deducción por alquiler en Madrid",
+    "messages": [
+      {
+        "role": "user",
+        "content": "¿Puedo deducirme el alquiler de mi piso en Madrid si gano 28.000 euros al año?"
+      },
+      {
+        "role": "assistant",
+        "content": "Sí, puedes aplicar la deducción autonómica de la Comunidad de Madrid, aunque con un límite importante.\n\nSegún [[Deducción Alquiler Madrid]], la deducción es del **30%** de las cantidades pagadas por arrendamiento de vivienda habitual, con un máximo de **1.000 €/año** (o 1.500 € si eres menor de 35 años o tienes discapacidad).\n\nEl requisito de renta establece que la suma de tus bases imponibles general y del ahorro no puede superar **25.620 €** en tributación individual. Con 28.000 € de ingresos brutos, tu base imponible neta (tras la reducción por rendimientos del trabajo de ~5.565 €) quedará probablemente por debajo de ese umbral, así que lo más probable es que **sí cumplas el requisito**.\n\nSi pagas, por ejemplo, 700 €/mes (8.400 €/año), la deducción sería 8.400 × 30% = 2.520 €, pero limitada a **1.000 €** en tu declaración. Revisa la casilla correspondiente de deducciones autonómicas de Madrid en tu borrador."
+      }
+    ]
+  },
+  {
+    "id": "criptomonedas",
+    "title": "Venta de Bitcoin en el IRPF",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Compré Bitcoin en 2021 por 5.000€ y lo vendí en 2024 por 18.000€. ¿Cuánto pago de impuestos?"
+      },
+      {
+        "role": "assistant",
+        "content": "Tu ganancia patrimonial es de **13.000 €** (18.000 - 5.000), que tributa en la base del ahorro.\n\nSegún [[Criptomonedas]], las ventas de criptomonedas generan ganancias patrimoniales gravadas en la base del ahorro con la escala progresiva:\n\n| Tramo | Tipo |\n|-------|------|\n| Primeros 6.000 € | 19% |\n| De 6.001 € a 50.000 € | 21% |\n\nCálculo para tus 13.000 €:\n- 6.000 × 19% = **1.140 €**\n- 7.000 × 21% = **1.470 €**\n- **Total: 2.610 €**\n\nAdemás, dado que el Bitcoin lo compraste antes y vendiste en 2024, se aplica **FIFO** (las primeras unidades compradas son las primeras vendidas). Deberás declararlo en la casilla de ganancias patrimoniales derivadas de transmisión de elementos patrimoniales (modelo 100)."
+      }
+    ]
+  },
+  {
+    "id": "base-imponible",
+    "title": "¿Qué es la base imponible?",
+    "messages": [
+      {
+        "role": "user",
+        "content": "¿Qué es la base imponible y en qué se diferencia de mi salario bruto?"
+      },
+      {
+        "role": "assistant",
+        "content": "La base imponible y el salario bruto son conceptos distintos, aunque relacionados.\n\nSegún [[Base Imponible]], la base imponible del IRPF es la suma de todos tus rendimientos netos (no brutos) e imputaciones de renta. Se divide en:\n\n- **Base general**: rendimientos del trabajo, actividades económicas, capital mobiliario no especial, etc.\n- **Base del ahorro**: intereses, dividendos, ganancias por venta de activos.\n\n**Diferencia con el salario bruto:**\n\nA tu salario bruto se le aplican primero los gastos deducibles de rendimientos del trabajo (cotizaciones a la Seguridad Social, ~2.000 €/año de gasto genérico, gastos de movilidad si aplica), obteniendo el **rendimiento neto del trabajo**. Luego se aplica la reducción por obtención de rendimientos del trabajo (hasta 6.498 € para rentas bajas). El resultado forma parte de tu base imponible general.\n\nPor tanto: Salario bruto → menos gastos deducibles → Rendimiento neto → menos reducciones → **Base imponible general**."
+      }
+    ]
+  }
+]
