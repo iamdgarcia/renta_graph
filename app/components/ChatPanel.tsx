@@ -1,7 +1,7 @@
 'use client'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 type Props = {
   apiKey: string | null
@@ -28,12 +28,12 @@ export function ChatPanel({ apiKey, onCitationClick }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null)
   const [input, setInput] = useState('')
 
-  const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({
-      api: '/api/chat',
-      headers: apiKey ? { Authorization: `Bearer ${apiKey}` } : {},
-    }),
-  })
+  const transport = useMemo(
+    () => new DefaultChatTransport({ api: '/api/chat' }),
+    [],
+  )
+
+  const { messages, sendMessage, status } = useChat({ transport })
 
   // Auto-scroll on new messages
   useEffect(() => {
@@ -47,7 +47,10 @@ export function ChatPanel({ apiKey, onCitationClick }: Props) {
     const text = input.trim()
     if (!text || isLoading) return
     setInput('')
-    sendMessage({ text })
+    sendMessage(
+      { text },
+      apiKey ? { headers: { Authorization: `Bearer ${apiKey}` } } : undefined,
+    )
   }
 
   return (
