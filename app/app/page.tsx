@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { FileTree } from '@/components/FileTree'
 import { ArticleViewer } from '@/components/ArticleViewer'
 import { ChatPanel } from '@/components/ChatPanel'
@@ -15,6 +15,7 @@ export default function Home() {
   const [activeFile, setActiveFile] = useState<string | null>(null)
   const [articleContent, setArticleContent] = useState<string | null>(null)
   const [articleLoading, setArticleLoading] = useState(false)
+  const fetchAbortRef = useRef<AbortController | null>(null)
 
   // Read API key from localStorage after mount (avoids SSR mismatch)
   useEffect(() => {
@@ -30,20 +31,32 @@ export default function Home() {
   }, [])
 
   const handleFileSelect = useCallback(async (filename: string) => {
+    fetchAbortRef.current?.abort()
+    const controller = new AbortController()
+    fetchAbortRef.current = controller
+
     setActiveFile(filename)
     setArticleLoading(true)
     setArticleContent(null)
     try {
-      const res = await fetch(`/api/wiki?file=${encodeURIComponent(filename)}`)
+      const res = await fetch(`/api/wiki?file=${encodeURIComponent(filename)}`, {
+        signal: controller.signal,
+      })
       setArticleContent(await res.text())
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') {
+        setActiveFile(null)
+      }
     } finally {
       setArticleLoading(false)
     }
   }, [])
 
   const handleCloseArticle = useCallback(() => {
+    fetchAbortRef.current?.abort()
     setActiveFile(null)
     setArticleContent(null)
+    setArticleLoading(false)
   }, [])
 
   const handleKeySubmit = useCallback((key: string) => {
