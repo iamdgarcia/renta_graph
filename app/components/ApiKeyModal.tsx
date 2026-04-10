@@ -6,9 +6,10 @@ import * as Dialog from '@radix-ui/react-dialog'
 interface ApiKeyModalProps {
   open: boolean
   onKeySubmit: (key: string) => void
+  onShowDemo?: () => void
 }
 
-export function ApiKeyModal({ open, onKeySubmit }: ApiKeyModalProps) {
+export function ApiKeyModal({ open, onKeySubmit, onShowDemo: _onShowDemo }: ApiKeyModalProps) {
   const [key, setKey] = useState('')
 
   function handleSubmit(e: React.FormEvent) {
