@@ -18,7 +18,7 @@
 }
 
 body {
-  background-color: #faf9f6;
-  color: #1c1917;
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
 }
