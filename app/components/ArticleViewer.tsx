@@ -1,4 +1,4 @@
-import ReactMarkdown from 'react-markdown'
+import Markdown from 'react-markdown'
 
 type ArticleViewerProps = {
   file: string | null
@@ -63,7 +63,7 @@ export function ArticleViewer({ file, content, loading, onClose }: ArticleViewer
             )}
             {content && !loading && (
               <div className="prose prose-sm max-w-none">
-                <ReactMarkdown>{content}</ReactMarkdown>
+                <Markdown>{content}</Markdown>
               </div>
             )}
           </div>

@@ -23,6 +23,7 @@ export function TopNav({ apiKey, onRemoveKey, onShowDemo }: TopNavProps) {
 
       <div className="flex items-center gap-5">
         <button
+          type="button"
           onClick={onShowDemo}
           className="text-sm transition-opacity hover:opacity-70"
           style={{ color: 'var(--color-accent)' }}
@@ -40,6 +41,7 @@ export function TopNav({ apiKey, onRemoveKey, onShowDemo }: TopNavProps) {
               Clave activa
             </span>
             <button
+              type="button"
               onClick={onRemoveKey}
               className="text-xs transition-opacity hover:opacity-70"
               style={{ color: 'var(--color-muted)' }}
