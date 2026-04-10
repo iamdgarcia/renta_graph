@@ -17,7 +17,7 @@ function parseContent(text: string): React.ReactNode[] {
       return (
         <span
           key={i}
-          className="mx-0.5 inline-flex items-center rounded px-1.5 py-0.5 text-[11px]"
+          className="mx-0.5 inline-flex items-center rounded px-1.5 py-0.5 text-xs"
           style={{
             backgroundColor: '#eef2fb',
             color: 'var(--color-accent)',
@@ -41,7 +41,7 @@ export function DemoModal({ open, onClose }: Props) {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
         <Dialog.Content
-          className="fixed left-1/2 top-1/2 z-50 flex h-[600px] w-[900px] max-w-[95vw] max-h-[90vh] -translate-x-1/2 -translate-y-1/2 overflow-hidden focus:outline-none"
+          className="fixed left-1/2 top-1/2 z-50 flex h-[600px] w-[960px] max-w-[95vw] max-h-[90vh] -translate-x-1/2 -translate-y-1/2 overflow-hidden focus:outline-none"
           style={{
             backgroundColor: 'var(--color-bg)',
             borderRadius: '16px',

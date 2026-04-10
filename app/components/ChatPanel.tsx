@@ -26,7 +26,7 @@ function CitationChip({
     <button
       type="button"
       onClick={onClick}
-      className="mx-0.5 inline-flex items-center rounded px-1.5 py-0.5 text-[11px] transition-colors bg-[#eef2fb] hover:bg-[#dce6f7]"
+      className="mx-0.5 inline-flex items-center rounded px-1.5 py-0.5 text-xs transition-colors bg-[#eef2fb] hover:bg-[#dce6f7]"
       style={{
         color: 'var(--color-accent)',
         fontFamily: 'var(--font-mono)',
@@ -225,7 +225,7 @@ export function ChatPanel({ apiKey, onCitationClick }: Props) {
               onChange={(e) => setInput(e.target.value)}
               disabled={isLoading}
               placeholder="Escribe tu pregunta fiscal..."
-              className="flex-1 rounded-[10px] px-3 text-sm focus:outline-none disabled:opacity-50"
+              className="flex-1 rounded-[10px] px-3 text-sm outline-none focus:shadow-[0_0_0_2px_var(--color-accent)] disabled:opacity-50"
               style={{
                 height: '44px',
                 border: '1px solid var(--color-border)',
