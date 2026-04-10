@@ -3,14 +3,22 @@
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 
+type Provider = 'openai' | 'anthropic'
+
+const PLACEHOLDERS: Record<Provider, string> = {
+  openai: 'sk-...',
+  anthropic: 'sk-ant-...',
+}
+
 interface ApiKeyModalProps {
   open: boolean
   onKeySubmit: (key: string) => void
-  onShowDemo?: () => void
+  onShowDemo: () => void
 }
 
-export function ApiKeyModal({ open, onKeySubmit, onShowDemo: _onShowDemo }: ApiKeyModalProps) {
+export function ApiKeyModal({ open, onKeySubmit, onShowDemo }: ApiKeyModalProps) {
   const [key, setKey] = useState('')
+  const [provider, setProvider] = useState<Provider>('openai')
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -22,54 +30,123 @@ export function ApiKeyModal({ open, onKeySubmit, onShowDemo: _onShowDemo }: ApiK
   return (
     <Dialog.Root open={open}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-xl focus:outline-none">
-          <Dialog.Title className="mb-1 text-lg font-semibold text-gray-900">
-            Introduce tu API Key
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
+        <Dialog.Content
+          className="fixed left-1/2 top-1/2 z-50 w-full max-w-[440px] -translate-x-1/2 -translate-y-1/2 focus:outline-none"
+          style={{
+            backgroundColor: 'var(--color-surface)',
+            borderRadius: '16px',
+            padding: '32px',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+          }}
+        >
+          {/* Lock icon */}
+          <div className="mb-5 flex justify-center">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ color: 'var(--color-accent)' }}
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
+
+          <Dialog.Title
+            className="mb-1 text-center text-[22px]"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text)' }}
+          >
+            Conecta tu API Key
           </Dialog.Title>
-          <Dialog.Description className="mb-4 text-sm text-gray-600">
-            Tu clave se guarda únicamente en tu navegador (localStorage) y nunca se envía a nuestros servidores.
+          <Dialog.Description
+            className="mb-6 text-center text-[13px]"
+            style={{ color: 'var(--color-muted)' }}
+          >
+            Tu clave se guarda solo en tu navegador. Nunca llega a nuestros servidores.
           </Dialog.Description>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* Provider selector */}
+          <div className="mb-4 flex gap-2">
+            {(['openai', 'anthropic'] as Provider[]).map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setProvider(p)}
+                className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors"
+                style={{
+                  backgroundColor:
+                    provider === p ? 'var(--color-accent)' : 'transparent',
+                  color: provider === p ? '#ffffff' : 'var(--color-text)',
+                  border:
+                    provider === p
+                      ? 'none'
+                      : '1px solid var(--color-border)',
+                }}
+              >
+                {p === 'openai' ? 'OpenAI' : 'Anthropic'}
+              </button>
+            ))}
+          </div>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <input
               type="password"
               value={key}
               onChange={(e) => setKey(e.target.value)}
-              placeholder="sk-..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder={PLACEHOLDERS[provider]}
               autoComplete="off"
+              className="w-full rounded-lg px-3 text-sm focus:outline-none"
+              style={{
+                height: '44px',
+                border: '1px solid var(--color-border)',
+                color: 'var(--color-text)',
+                backgroundColor: 'var(--color-surface)',
+                fontFamily: 'var(--font-body)',
+              }}
             />
-
             <button
               type="submit"
               disabled={!key.trim()}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-lg text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+              style={{
+                height: '44px',
+                backgroundColor: 'var(--color-accent)',
+                fontFamily: 'var(--font-body)',
+              }}
             >
               Guardar clave
             </button>
           </form>
 
-          <p className="mt-4 text-xs text-gray-500">
-            Obtén tu clave en:{' '}
-            <a
-              href="https://platform.openai.com/api-keys"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-gray-700"
-            >
-              OpenAI
-            </a>{' '}
-            ·{' '}
-            <a
-              href="https://console.anthropic.com/settings/keys"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-gray-700"
-            >
-              Anthropic
-            </a>
-          </p>
+          {/* Divider */}
+          <div className="my-5 flex items-center gap-3">
+            <div
+              className="h-px flex-1"
+              style={{ backgroundColor: 'var(--color-border)' }}
+            />
+            <span className="text-xs" style={{ color: 'var(--color-muted)' }}>
+              o
+            </span>
+            <div
+              className="h-px flex-1"
+              style={{ backgroundColor: 'var(--color-border)' }}
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={onShowDemo}
+            className="w-full text-center text-sm transition-opacity hover:opacity-70"
+            style={{ color: 'var(--color-accent)' }}
+          >
+            Ver demo sin clave →
+          </button>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
