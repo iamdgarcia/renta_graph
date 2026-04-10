@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 
 type Provider = 'openai' | 'anthropic'
@@ -20,6 +20,14 @@ export function ApiKeyModal({ open, onKeySubmit, onShowDemo }: ApiKeyModalProps)
   const [key, setKey] = useState('')
   const [provider, setProvider] = useState<Provider>('openai')
 
+  // Reset form state each time modal reopens
+  useEffect(() => {
+    if (!open) {
+      setKey('')
+      setProvider('openai')
+    }
+  }, [open])
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const trimmed = key.trim()
@@ -33,6 +41,9 @@ export function ApiKeyModal({ open, onKeySubmit, onShowDemo }: ApiKeyModalProps)
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
         <Dialog.Content
           className="fixed left-1/2 top-1/2 z-50 w-full max-w-[440px] -translate-x-1/2 -translate-y-1/2 focus:outline-none"
+          onEscapeKeyDown={(e) => e.preventDefault()}
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
           style={{
             backgroundColor: 'var(--color-surface)',
             borderRadius: '16px',
@@ -85,7 +96,7 @@ export function ApiKeyModal({ open, onKeySubmit, onShowDemo }: ApiKeyModalProps)
                   color: provider === p ? '#ffffff' : 'var(--color-text)',
                   border:
                     provider === p
-                      ? 'none'
+                      ? '1px solid transparent'
                       : '1px solid var(--color-border)',
                 }}
               >

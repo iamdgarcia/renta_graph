@@ -17,7 +17,7 @@ function parseContent(text: string): React.ReactNode[] {
       return (
         <span
           key={i}
-          className="mx-0.5 inline-flex items-center rounded px-1.5 py-0.5 text-xs"
+          className="mx-0.5 inline-flex items-center rounded px-1.5 py-0.5 text-xs transition-colors hover:bg-[#dce6f7]"
           style={{
             backgroundColor: '#eef2fb',
             color: 'var(--color-accent)',
@@ -126,7 +126,7 @@ export function DemoModal({ open, onClose }: Props) {
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className="max-w-[80%] px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap"
+                    className="max-w-[78%] px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap"
                     style={{
                       borderRadius:
                         msg.role === 'user'
