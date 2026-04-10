@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 
 type Provider = 'openai' | 'anthropic'
@@ -19,14 +19,6 @@ interface ApiKeyModalProps {
 export function ApiKeyModal({ open, onKeySubmit, onShowDemo }: ApiKeyModalProps) {
   const [key, setKey] = useState('')
   const [provider, setProvider] = useState<Provider>('openai')
-
-  // Reset form state each time modal reopens
-  useEffect(() => {
-    if (!open) {
-      setKey('')
-      setProvider('openai')
-    }
-  }, [open])
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
