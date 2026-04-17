@@ -16,18 +16,42 @@ An LLM-powered knowledge base for the Spanish *Declaración de la Renta*, implem
 ## Architecture
 
 ```
-┌─────────────────────────────────────┐     ┌──────────────────────────────────────┐
-│        THE COMPILER (offline)        │     │         THE WEB APP (Vercel)          │
-│                                     │     │                                      │
-│  scraper/   →  raw/                 │     │  Left pane: Wiki Explorer             │
-│  (AEAT PDF + BOE HTML)              │     │  (file tree + Markdown viewer)        │
-│          ↓                          │     │                                      │
-│  compiler/  →  app/content/wiki/    │────▶│  Right pane: Agentic Chat             │
-│  (MarkItDown + GPT-4o)              │     │  (reads wiki index → tool calls)      │
-│          ↓                          │     │                                      │
-│  index_builder → index.md           │     │  BYOK: user provides own API key      │
-└─────────────────────────────────────┘     └──────────────────────────────────────┘
-        runs locally / GitHub Actions              hosted on Vercel (zero LLM cost)
+                    ┌─────────────────────────────────────────────┐
+                    │                  CLAUDE.md                  │
+                    │       the schema that controls              │
+                    │         everything the pipeline does        │
+                    └─────────────────────────────────────────────┘
+                                           │
+                                           ▼
+┌ ─ ─ ─ ─ ─ ─ ─ ─ ┐   ┌───────────────────────────────────────┐   ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
+│                  │   │                                       │   │                             │
+│      raw/        │   │             COMPILER                  │   │    app/content/wiki/        │
+│                  │   │                                       │   │                             │
+│  AEAT PDFs       │──>│  0. scrape AEAT + BOE                 │──>│  Conceptos Generales/       │
+│  BOE HTML        │   │  1. parse PDFs (MarkItDown)           │   │  Rendimientos/              │
+│  CC.AA. norms    │   │  2. classify concepts                 │   │  Deducciones/               │
+│                  │   │  3. compile articles (LLM)            │   │  Autonómica/                │
+│                  │   │  4. add [[wikilinks]]                 │   │  index.md                   │
+│                  │   │  5. update index.md                   │   │                             │
+└ ─ ─ ─ ─ ─ ─ ─ ─ ┘   └───────────────────────────────────────┘   └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
+                                                                                  │
+                                                                                  ▼
+                                                                    ┌─────────────────────────────┐
+                                                                    │      Web App (Vercel)       │
+                                                                    │      knowledge graph        │
+                                                                    │      + wiki explorer        │
+                                                                    └─────────────────────────────┘
+
+┌ ─ ─ ─ ─ ─ ─ ─ ─ ┐   ┌───────────────────────────────────────┐
+│                  │   │                                       │
+│    pregunta      │──>│               AGENT                   │
+│                  │   │                                       │──> wiki grows
+│                  │   │  scan index.md                        │
+│                  │   │  call read_wiki_page (tools)          │
+│    respuesta     │<──│  synthesize with [[refs]]             │
+│   (con [[refs]]) │   │  file insights back in                │
+│                  │   │                                       │
+└ ─ ─ ─ ─ ─ ─ ─ ─ ┘   └───────────────────────────────────────┘
 ```
 
 **Key insight:** By pre-compiling raw tax PDFs into a structured wiki, the agent can navigate knowledge accurately using an index file — no embeddings or vector DB needed. This is the Karpathy method: the LLM writes and maintains the wiki, then reads it to answer questions.
@@ -174,6 +198,48 @@ The wiki is read from disk at build time — no database, no re-deployment pipel
 2. Set **Root Directory** to `app/` in Vercel project settings.
 3. No environment variables needed — the app is fully BYOK.
 4. Add `OPENAI_API_KEY` as a repository secret in GitHub for the wiki-update Action.
+
+---
+
+## Contributing
+
+Contributions are welcome. Please keep changes focused, tested, and easy to review.
+
+### Development setup
+
+```bash
+# Python dependencies (scraper + compiler)
+pip install -r scraper/requirements.txt
+pip install -r compiler/requirements.txt
+
+# App dependencies
+cd app && npm install
+```
+
+### Typical workflow
+
+1. Create a branch from `main` (for example: `feat/wiki-categories-fallback`).
+2. Make small, scoped commits with clear messages.
+3. Run the checks below before opening a PR.
+4. Open a PR with context, screenshots (if UI changes), and validation notes.
+
+### Validation checklist
+
+```bash
+# App lint
+cd app && npm run lint
+
+# Pipeline smoke test
+python test_mvp.py
+```
+
+If your change touches the compiler output, include a short note about what changed in `app/content/wiki/` and why.
+
+### Commit message conventions
+
+- Prefer Conventional Commits (examples: `fix: ...`, `feat: ...`, `docs: ...`).
+- Use imperative mood and keep the subject line under ~72 chars.
+- Reference related issue/PR IDs when available.
 
 ---
 
