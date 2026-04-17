@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grafo de Conocimiento IRPF</title>
+  <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; background: #faf9f6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    #graph { width: 100%; height: 100%; }
+    #status {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: #9ca3af; font-size: 12px; pointer-events: none;
+    }
+    #status svg { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    #hint {
+      position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+      background: #f5f3ee; border: 1px solid #e8e0d6; color: #78716c;
+      border-radius: 9999px; padding: 4px 12px; font-size: 11px;
+      pointer-events: none; display: none; white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div id="graph"></div>
+  <div id="status">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+    </svg>
+    <span id="status-text">Cargando grafo…</span>
+  </div>
+  <div id="hint">Clic en un nodo para abrir el artículo · Rueda para zoom</div>
+
+  <script>
+    const PALETTE = [
+      '#1a4fa0','#2d8a4e','#c25400','#7b2fa0','#b5000d',
+      '#00688b','#7b6200','#006b5a','#8b3a00','#3a5c8b',
+      '#6b0d5a','#2d7b3a','#5a3a8b','#8b5a00','#00588b',
+      '#8b0028','#5a8b00','#00748b','#8b4600','#6b8b00',
+    ];
+
+    function communityColor(cid) {
+      if (cid === null || cid === undefined) return '#9ca3af';
+      return PALETTE[cid % PALETTE.length];
+    }
+
+    let network = null;
+    let nodesDS = null;
+    let rawNodes = [];
+    let degreeMap = {};
+    let activeLabel = null;
+
+    function nodeVisual(n, isActive) {
+      const deg = degreeMap[n.id] || 1;
+      const size = 7 + deg * 1.8;
+      const color = communityColor(n.community);
+      return {
+        id: n.id,
+        label: deg >= 5 ? n.label : '',
+        title: n.label,
+        color: {
+          background: isActive ? '#ffffff' : color + 'cc',
+          border: isActive ? '#1a4fa0' : color,
+          highlight: { background: '#ffffff', border: '#1a4fa0' },
+          hover: { background: color + 'ee', border: color },
+        },
+        borderWidth: isActive ? 2.5 : 1.5,
+        size,
+        font: {
+          size: Math.min(12, 8 + deg * 0.4),
+          color: '#1c1917',
+          face: 'system-ui, sans-serif',
+          strokeWidth: 2,
+          strokeColor: '#faf9f6',
+          vadjust: -2,
+        },
+        shape: 'dot',
+      };
+    }
+
+    async function init() {
+      const res = await fetch('/api/graph');
+      const data = await res.json();
+      rawNodes = data.nodes;
+
+      for (const e of data.edges) {
+        degreeMap[e.source] = (degreeMap[e.source] || 0) + 1;
+        degreeMap[e.target] = (degreeMap[e.target] || 0) + 1;
+      }
+
+      const visNodes = new vis.DataSet(rawNodes.map(n => nodeVisual(n, false)));
+      nodesDS = visNodes;
+
+      const visEdges = new vis.DataSet(data.edges.map((e, i) => ({
+        id: i,
+        from: e.source,
+        to: e.target,
+        color: {
+          color: '#c8c3bb',
+          highlight: '#1a4fa0',
+          hover: '#9ca3af',
+          opacity: e.confidence === 'EXTRACTED' ? 0.7 : 0.4,
+        },
+        width: e.confidence === 'EXTRACTED' ? 1.5 : 0.8,
+        smooth: { enabled: true, type: 'dynamic', roundness: 0.4 },
+      })));
+
+      const container = document.getElementById('graph');
+      const options = {
+        physics: {
+          solver: 'forceAtlas2Based',
+          forceAtlas2Based: {
+            gravitationalConstant: -55,
+            centralGravity: 0.006,
+            springLength: 110,
+            springConstant: 0.07,
+            damping: 0.45,
+            avoidOverlap: 0.6,
+          },
+          stabilization: { enabled: true, iterations: 250, fit: true },
+        },
+        interaction: {
+          hover: true,
+          tooltipDelay: 100,
+          zoomView: true,
+          dragView: true,
+          navigationButtons: false,
+          keyboard: false,
+        },
+        nodes: { shadow: false },
+        edges: { selectionWidth: 0, hoverWidth: 0 },
+      };
+
+      document.getElementById('status-text').textContent = 'Calculando posiciones…';
+      network = new vis.Network(container, { nodes: visNodes, edges: visEdges }, options);
+
+      network.on('stabilizationIterationsDone', () => {
+        network.setOptions({ physics: { enabled: false } });
+        network.fit({ animation: { duration: 400, easingFunction: 'easeInOutQuad' } });
+        document.getElementById('status').style.display = 'none';
+        document.getElementById('hint').style.display = 'block';
+      });
+
+      network.on('click', params => {
+        if (params.nodes.length === 0) return;
+        const nodeId = params.nodes[0];
+        const node = rawNodes.find(n => n.id === nodeId);
+        if (node) {
+          window.parent.postMessage({ type: 'nodeClick', label: node.label }, '*');
+        }
+      });
+    }
+
+    // Highlight active node on message from parent
+    window.addEventListener('message', e => {
+      if (e.data?.type !== 'setActive') return;
+      activeLabel = e.data.label ?? null;
+      if (nodesDS && rawNodes.length > 0) {
+        nodesDS.update(rawNodes.map(n => nodeVisual(n, n.label === activeLabel)));
+      }
+    });
+
+    init().catch(err => {
+      document.getElementById('status-text').textContent = 'Error al cargar el grafo';
+      console.error(err);
+    });
+  </script>
+</body>
+</html>

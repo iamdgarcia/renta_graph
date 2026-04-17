@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { listWikiFiles, readWikiPage } from '@/lib/wiki'
+import { listWikiFilesWithMeta, readWikiPage } from '@/lib/wiki'
 
 export const runtime = 'nodejs'
 
@@ -8,11 +8,11 @@ export async function GET(request: NextRequest) {
 
   try {
     if (!file) {
-      const files = await listWikiFiles()
+      const files = await listWikiFilesWithMeta()
       return Response.json(files)
     }
 
-    const content = await readWikiPage(file)
+    const content = await readWikiPage(file.replace(/\.md$/i, ''))
     return new Response(content, {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     })

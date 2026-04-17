@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { FileTree } from '@/components/FileTree'
+import { FileTree, type WikiFileMeta } from '@/components/FileTree'
 import { ArticleViewer } from '@/components/ArticleViewer'
 import { ChatPanel } from '@/components/ChatPanel'
 import { TopNav } from '@/components/TopNav'
@@ -11,7 +11,8 @@ import { DemoModal } from '@/components/DemoModal'
 export default function Home() {
   const [apiKey, setApiKey] = useState<string | null>(null)
   const [showDemo, setShowDemo] = useState(false)
-  const [files, setFiles] = useState<string[]>([])
+  const [files, setFiles] = useState<WikiFileMeta[]>([])
+  const [nodeMap, setNodeMap] = useState<Record<string, string | null>>({})
   const [activeFile, setActiveFile] = useState<string | null>(null)
   const [articleContent, setArticleContent] = useState<string | null>(null)
   const [articleLoading, setArticleLoading] = useState(false)
@@ -26,8 +27,16 @@ export default function Home() {
   useEffect(() => {
     fetch('/api/wiki')
       .then((r) => r.json())
-      .then((data: string[]) => setFiles(data))
+      .then((data: WikiFileMeta[]) => setFiles(data))
       .catch(() => setFiles([]))
+  }, [])
+
+  // Load pre-built node→article mapping (independent — failure must not affect file list)
+  useEffect(() => {
+    fetch('/node-to-article.json')
+      .then((r) => r.json())
+      .then((data: Record<string, string | null>) => setNodeMap(data))
+      .catch(() => {/* mapping unavailable — silently skip */})
   }, [])
 
   const handleFileSelect = useCallback(async (filename: string) => {
@@ -42,10 +51,12 @@ export default function Home() {
       const res = await fetch(`/api/wiki?file=${encodeURIComponent(filename)}`, {
         signal: controller.signal,
       })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       setArticleContent(await res.text())
     } catch (err) {
       if ((err as Error).name !== 'AbortError') {
         setActiveFile(null)
+        setArticleContent(null)
       }
     } finally {
       setArticleLoading(false)
@@ -69,13 +80,23 @@ export default function Home() {
     setApiKey(null)
   }, [])
 
-  // Citations arrive as article names without .md; resolve against the file list
+  // Resolve a node label or [[citation]] to a wiki filename.
+  // Priority: pre-built node map → normalize match → skip if null.
   const handleCitationClick = useCallback((articleName: string) => {
-    const filename =
-      files.find((f) => f.replace(/\.md$/, '') === articleName) ??
-      `${articleName}.md`
-    handleFileSelect(filename)
-  }, [files, handleFileSelect])
+    // 1. Pre-built map (covers graph nodes with special chars and prefix expansions)
+    if (Object.prototype.hasOwnProperty.call(nodeMap, articleName)) {
+      const mapped = nodeMap[articleName]
+      if (mapped) handleFileSelect(mapped)
+      return  // null means no article exists for this graph node
+    }
+
+    // 2. Normalize match: underscores↔spaces, case-insensitive (for [[wikilink]] citations)
+    const normalize = (s: string) => s.replace(/\.md$/, '').replace(/_/g, ' ').toLowerCase()
+    const needle = normalize(articleName)
+    const entry = files.find((f) => normalize(f.name) === needle)
+    if (entry) handleFileSelect(entry.name)
+    // If still no match, silently skip — no "Bad request" shown to user
+  }, [nodeMap, files, handleFileSelect])
 
   return (
     <div
@@ -93,6 +114,7 @@ export default function Home() {
           files={files}
           activeFile={activeFile}
           onFileSelect={handleFileSelect}
+          onNodeClick={handleCitationClick}
         />
         <ArticleViewer
           file={activeFile}

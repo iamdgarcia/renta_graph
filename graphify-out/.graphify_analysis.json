@@ -1,0 +1,345 @@
+{
+  "communities": {
+    "0": [
+      "cataluna_condicion_discapacidad",
+      "cataluna_condicion_edad_joven",
+      "cataluna_deduccion_alquiler_vivienda",
+      "cataluna_deduccion_arrendamiento_vivienda_joven",
+      "cataluna_deduccion_conservacion_patrimonio",
+      "cataluna_deduccion_cuidado_personas_dependientes",
+      "cataluna_deduccion_discapacidad",
+      "cataluna_deduccion_donativos",
+      "cataluna_deduccion_familia_numerosa",
+      "cataluna_deduccion_nacimiento_adopcion",
+      "cataluna_deduccion_proteccion_medio_ambiente",
+      "cataluna_deduccion_rehabilitacion_vivienda",
+      "cataluna_irpf_deducciones",
+      "cataluna_limite_base_imponible",
+      "cataluna_region"
+    ],
+    "1": [
+      "cv_comunitat_valenciana",
+      "cv_condicion_discapacidad_33pct",
+      "cv_condicion_jovenes_35",
+      "cv_deduccion_adquisicion_vehiculo_electrico",
+      "cv_deduccion_arrendamiento_vivienda_habitual",
+      "cv_deduccion_autoempleo_jovenes",
+      "cv_deduccion_discapacidad_contribuyente",
+      "cv_deduccion_familia_numerosa",
+      "cv_deduccion_gastos_educacion",
+      "cv_deduccion_inversion_vivienda_habitual",
+      "cv_deduccion_nacimiento_adopcion",
+      "cv_deduccion_obras_mejora_eficiencia_energetica",
+      "cv_irpf_tramo_autonomico",
+      "cv_ley_13_1997",
+      "cv_limite_renta_base_imponible"
+    ],
+    "2": [
+      "asturias_condicion_base_imponible_limite",
+      "asturias_condicion_discapacidad_33_pct",
+      "asturias_condicion_edad_menos_35",
+      "asturias_deduccion_acogimiento_familiar",
+      "asturias_deduccion_alquiler_vivienda_habitual",
+      "asturias_deduccion_autoempleo_jovenes",
+      "asturias_deduccion_autoempleo_mujeres",
+      "asturias_deduccion_discapacidad_ascendientes",
+      "asturias_deduccion_discapacidad_descendientes",
+      "asturias_deduccion_energia_renovable",
+      "asturias_deduccion_nacimiento_adopcion",
+      "asturias_deduccion_obras_mejora_eficiencia_energetica",
+      "asturias_deduccion_victimas_terrorismo",
+      "asturias_irpf_deducciones_autonomicas",
+      "asturias_principado_de_asturias"
+    ],
+    "3": [
+      "aeat_index_agencia_tributaria",
+      "aeat_index_canarias",
+      "aeat_index_ceuta_melilla",
+      "aeat_index_colaboracion_aeat_canarias",
+      "aeat_index_colaboracion_aeat_ccaa",
+      "aeat_index_comunidades_autonomas",
+      "aeat_index_fiscalidad_autonomica",
+      "aeat_index_jurisprudencia_foral",
+      "aeat_index_normativa_regimen_comun",
+      "aeat_index_normativa_regimen_foral",
+      "aeat_index_regimen_comun",
+      "aeat_index_regimen_fiscal_especial_ceuta_melilla",
+      "aeat_index_regimen_foral",
+      "aeat_index_resoluciones_juntas_arbitrales"
+    ],
+    "4": [
+      "pais_vasco_concierto_economico",
+      "pais_vasco_deduccion_alquiler_vivienda",
+      "pais_vasco_deduccion_discapacidad",
+      "pais_vasco_deduccion_eficiencia_energetica",
+      "pais_vasco_deduccion_euskera",
+      "pais_vasco_deduccion_planes_pensiones",
+      "pais_vasco_deduccion_vivienda_habitual",
+      "pais_vasco_hacienda_foral",
+      "pais_vasco_irpf_norma_foral",
+      "pais_vasco_minimo_personal",
+      "pais_vasco_region",
+      "pais_vasco_territorio_historico_alava",
+      "pais_vasco_territorio_historico_bizkaia",
+      "pais_vasco_territorio_historico_gipuzkoa"
+    ],
+    "5": [
+      "extremadura_condicion_discapacidad_33pct",
+      "extremadura_condicion_edad_jovenes",
+      "extremadura_condicion_nucleo_rural",
+      "extremadura_deduccion_adquisicion_vivienda_habitual",
+      "extremadura_deduccion_alquiler_vivienda_habitual",
+      "extremadura_deduccion_autoempleo_jovenes",
+      "extremadura_deduccion_cuidado_familiares",
+      "extremadura_deduccion_discapacidad",
+      "extremadura_deduccion_gastos_educacion",
+      "extremadura_deduccion_gastos_guarderia",
+      "extremadura_irpf_deducciones",
+      "extremadura_region"
+    ],
+    "6": [
+      "boe_andalucia_irpf",
+      "boe_andalucia_region",
+      "boe_condicion_discapacidad_minimo33",
+      "boe_condicion_limite_renta",
+      "boe_condicion_menores35",
+      "boe_deduccion_acceso_vivienda_jovenes",
+      "boe_deduccion_alquiler_vivienda",
+      "boe_deduccion_discapacidad",
+      "boe_deduccion_donativos_ecologicos",
+      "boe_deduccion_ejercicio_fisico",
+      "boe_deduccion_gastos_escolares",
+      "boe_deduccion_trabajo_discapacidad"
+    ],
+    "7": [
+      "murcia_condicion_residencia",
+      "murcia_deduccion_arrendamiento_vivienda",
+      "murcia_deduccion_discapacidad",
+      "murcia_deduccion_familia_numerosa",
+      "murcia_deduccion_gastos_escolaridad",
+      "murcia_deduccion_inversion_vivienda_habitual",
+      "murcia_deduccion_nacimiento_adopcion",
+      "murcia_irpf_deducciones",
+      "murcia_limite_renta_base",
+      "murcia_region"
+    ],
+    "8": [
+      "aeat_normativa_ccaa_agencia_tributaria",
+      "aeat_normativa_ccaa_fiscalidad_autonomica",
+      "aeat_normativa_ccaa_fiscalidad_autonomica_y_local",
+      "aeat_normativa_ccaa_libro_electronico_normativa_autonomica_foral",
+      "aeat_normativa_ccaa_libro_electronico_tributacion_autonomica",
+      "aeat_normativa_ccaa_normativa_tributaria_ccaa",
+      "aeat_normativa_ccaa_regimen_comun"
+    ],
+    "9": [
+      "hacienda_tributacion_autonomica_2025_comunidades_autonomas_regimen_comun",
+      "hacienda_tributacion_autonomica_2025_declaracion_renta",
+      "hacienda_tributacion_autonomica_2025_irpf",
+      "hacienda_tributacion_autonomica_2025_tributacion_autonomica",
+      "hacienda_tributacion_autonomica_2025_tributos_cedidos"
+    ],
+    "10": [
+      "castilla_la_mancha_despoblacion",
+      "castilla_la_mancha_ley_2_2021",
+      "castilla_la_mancha_medidas_tributarias",
+      "castilla_la_mancha_medio_rural",
+      "castilla_la_mancha_region"
+    ],
+    "11": [
+      "madrid_comunidad_de_madrid",
+      "madrid_decreto_legislativo_1_2010",
+      "madrid_texto_refundido_tributos_cedidos",
+      "madrid_tributos_cedidos"
+    ],
+    "12": [
+      "galicia_decreto_legislativo_1_2011",
+      "galicia_irpf_deducciones",
+      "galicia_region",
+      "galicia_tributos_cedidos"
+    ],
+    "13": [
+      "castilla_y_leon_decreto_legislativo_1_2013",
+      "castilla_y_leon_irpf_deducciones",
+      "castilla_y_leon_region",
+      "castilla_y_leon_texto_refundido_tributos"
+    ],
+    "14": [
+      "navarra_comunidad_foral",
+      "navarra_convenio_economico",
+      "navarra_decreto_foral_legislativo_4_2008",
+      "navarra_ley_foral_irpf"
+    ],
+    "15": [
+      "la_rioja_impuestos_propios_tributos_cedidos",
+      "la_rioja_irpf_deducciones",
+      "la_rioja_ley_10_2017",
+      "la_rioja_region"
+    ],
+    "16": [
+      "baleares_irpf_deducciones",
+      "baleares_ley14_2014",
+      "baleares_region"
+    ],
+    "17": [
+      "cantabria_ley9_1992",
+      "cantabria_region",
+      "cantabria_tasas_precios_publicos"
+    ],
+    "18": [
+      "aragon_decreto_legislativo_1_2005",
+      "aragon_region",
+      "aragon_tributos_cedidos"
+    ],
+    "19": [
+      "canarias_comunidad_autonoma",
+      "canarias_decreto_legislativo_1_2009",
+      "canarias_tributos_cedidos"
+    ],
+    "20": [
+      "hacienda_tributacion_autonomica_2025_ministerio_hacienda",
+      "hacienda_tributacion_autonomica_2025_portal"
+    ],
+    "21": [
+      "aeat_normativa_ccaa_secretaria_general_financiacion_autonomica"
+    ],
+    "22": [
+      "aeat_index_fiscalidad_local"
+    ],
+    "23": [
+      "aeat_index_secretaria_financiacion_autonomica"
+    ],
+    "24": [
+      "aeat_index_modelos_financiacion"
+    ],
+    "25": [
+      "aeat_index_organos_relacion_coordinacion"
+    ]
+  },
+  "cohesion": {
+    "0": 0.14,
+    "1": 0.14,
+    "2": 0.16,
+    "3": 0.15,
+    "4": 0.16,
+    "5": 0.18,
+    "6": 0.18,
+    "7": 0.22,
+    "8": 0.29,
+    "9": 0.4,
+    "10": 0.5,
+    "11": 0.5,
+    "12": 0.5,
+    "13": 0.5,
+    "14": 0.67,
+    "15": 0.5,
+    "16": 0.67,
+    "17": 0.67,
+    "18": 0.67,
+    "19": 0.67,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0
+  },
+  "gods": [
+    {
+      "id": "cataluna_irpf_deducciones",
+      "label": "Deducciones auton\u00f3micas IRPF Catalu\u00f1a",
+      "edges": 11
+    },
+    {
+      "id": "cv_irpf_tramo_autonomico",
+      "label": "Tramo auton\u00f3mico del IRPF \u2014 Comunitat Valenciana",
+      "edges": 11
+    },
+    {
+      "id": "asturias_irpf_deducciones_autonomicas",
+      "label": "Deducciones Auton\u00f3micas IRPF Asturias",
+      "edges": 11
+    },
+    {
+      "id": "extremadura_irpf_deducciones",
+      "label": "Deducciones Auton\u00f3micas IRPF Extremadura",
+      "edges": 8
+    },
+    {
+      "id": "boe_andalucia_irpf",
+      "label": "Deducciones IRPF Andaluc\u00eda",
+      "edges": 8
+    },
+    {
+      "id": "pais_vasco_irpf_norma_foral",
+      "label": "Norma Foral del IRPF \u2014 Pa\u00eds Vasco",
+      "edges": 8
+    },
+    {
+      "id": "murcia_irpf_deducciones",
+      "label": "Deducciones Auton\u00f3micas IRPF Murcia",
+      "edges": 7
+    },
+    {
+      "id": "aeat_index_fiscalidad_autonomica",
+      "label": "Fiscalidad Auton\u00f3mica",
+      "edges": 5
+    },
+    {
+      "id": "aeat_index_regimen_comun",
+      "label": "R\u00e9gimen Com\u00fan",
+      "edges": 5
+    },
+    {
+      "id": "aeat_index_regimen_foral",
+      "label": "R\u00e9gimen Foral",
+      "edges": 5
+    }
+  ],
+  "surprises": [],
+  "questions": [
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Portal Tributaci\u00f3n Auton\u00f3mica 2025 - Hacienda`, `Tributos Cedidos Estatales`, `Ministerio de Hacienda (Espa\u00f1a)` to the rest of the system?",
+      "why": "94 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Catalu\u00f1a \u2014 Deducciones IRPF` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Comunitat Valenciana \u2014 Tramo Auton\u00f3mico` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14 - nodes in this community are weakly interconnected."
+    }
+  ],
+  "labels": {
+    "0": "Catalu\u00f1a \u2014 Deducciones IRPF",
+    "1": "Comunitat Valenciana \u2014 Tramo Auton\u00f3mico",
+    "2": "Asturias \u2014 Deducciones y Condiciones",
+    "3": "AEAT \u2014 \u00cdndice Fiscalidad Auton\u00f3mica",
+    "4": "Pa\u00eds Vasco \u2014 Concierto Econ\u00f3mico",
+    "5": "Extremadura \u2014 Deducciones Rurales y Sociales",
+    "6": "Andaluc\u00eda \u2014 BOE e IRPF Auton\u00f3mico",
+    "7": "Murcia \u2014 Deducciones Auton\u00f3micas",
+    "8": "AEAT \u2014 Normativa CCAA",
+    "9": "Ministerio Hacienda \u2014 Tributaci\u00f3n 2025",
+    "10": "Castilla-La Mancha \u2014 Medidas Tributarias",
+    "11": "Madrid \u2014 Tributos Cedidos",
+    "12": "Galicia \u2014 IRPF Auton\u00f3mico",
+    "13": "Castilla y Le\u00f3n \u2014 Deducciones Auton\u00f3micas",
+    "14": "Navarra \u2014 R\u00e9gimen Foral",
+    "15": "La Rioja \u2014 IRPF y Tributos Propios",
+    "16": "Baleares \u2014 Deducciones Auton\u00f3micas",
+    "17": "Cantabria \u2014 Legislaci\u00f3n Auton\u00f3mica",
+    "18": "Arag\u00f3n \u2014 Tributos Cedidos",
+    "19": "Canarias \u2014 R\u00e9gimen Especial",
+    "20": "Hacienda \u2014 Portal Institucional",
+    "21": "AEAT \u2014 Secretar\u00eda Financiaci\u00f3n",
+    "22": "AEAT \u2014 Fiscalidad Local",
+    "23": "AEAT \u2014 Secretar\u00eda Auton\u00f3mica",
+    "24": "AEAT \u2014 Modelos Financiaci\u00f3n",
+    "25": "AEAT \u2014 Coordinaci\u00f3n Institucional"
+  }
+}

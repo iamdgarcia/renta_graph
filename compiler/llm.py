@@ -1,7 +1,16 @@
-import os
+"""
+Phase 2 — Article Writing.
+
+Reads raw/topics.json (built by discoverer.py) and writes one wiki article
+per topic. For each topic, it searches the parsed documents for relevant
+passages and feeds them to the LLM as context.
+
+This is the "explosion" step: each index entry becomes a full wiki article.
+"""
+import json
 import re
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import instructor
 from openai import OpenAI
@@ -9,107 +18,160 @@ from pydantic import BaseModel, Field
 import yaml
 
 PARSED_DIR = Path("raw/parsed")
-WIKI_DIR = Path(os.environ.get("WIKI_DIR", "app/content/wiki"))
-MAX_CHUNK_CHARS = 30_000  # ~8K tokens at 3.5 chars/token
+TOPICS_FILE = Path("raw/topics.json")
+WIKI_DIR = Path("app/content/wiki")
+SOURCE_BASE = "https://sede.agenciatributaria.gob.es/Sede/manuales-practicos.html"
+
+# Max chars of relevant passages to feed per article
+MAX_CONTEXT_CHARS = 40_000
 
 
 class WikiArticle(BaseModel):
-    title: str = Field(description="Title of the tax concept in Spanish")
-    tags: List[str] = Field(description="2-5 lowercase kebab-case tags")
-    source_url: str = Field(description="Source URL for this information")
-    content: str = Field(description="Full Markdown content of the article in Spanish, using [[WikiLink]] cross-references")
-    category: str = Field(description="Category grouping: 'conceptos-generales', 'deducciones', 'rendimientos', 'inversiones', 'autonomica', or 'procedimientos'")
+    title: str = Field(description="Título canónico del concepto fiscal en español")
+    tags: List[str] = Field(description="3-6 etiquetas en kebab-case")
+    content: str = Field(
+        description=(
+            "Artículo completo en Markdown. Incluye: definición, requisitos o "
+            "condiciones, cálculo o importes cuando aplique, ejemplos si los hay "
+            "en la fuente, y referencias [[WikiLink]] a conceptos relacionados."
+        )
+    )
 
 
-SYSTEM_PROMPT = """Eres un experto en el sistema tributario español. Tu misión es convertir texto extraído de documentos fiscales en artículos de wiki bien estructurados.
+SYSTEM_PROMPT = """Eres un experto en el sistema tributario español especializado en IRPF.
 
-Para cada concepto fiscal identificado:
-1. Escribe el artículo en español claro y preciso
-2. Incluye definición, requisitos, cálculo o ejemplos cuando proceda
-3. Usa [[NombreConcepto]] para referenciar otros conceptos
-4. Mantén el contenido factual y basado en el documento fuente
-5. El título debe ser el nombre exacto del concepto fiscal"""
+Tu tarea es escribir un artículo de wiki completo sobre un concepto fiscal concreto,
+usando únicamente los fragmentos del manual oficial que se te proporcionan como contexto.
 
-USER_PROMPT_TEMPLATE = """Analiza el siguiente fragmento de documentación fiscal y genera artículos de wiki para los conceptos más importantes que encuentres. Genera entre 1 y 5 artículos según el contenido.
+Normas:
+- Escribe en español formal y preciso
+- Estructura el artículo con secciones Markdown (##, ###) cuando proceda
+- Usa [[NombreConcepto]] para enlazar conceptos relacionados
+- Incluye cifras, porcentajes y plazos exactos cuando aparezcan en el contexto
+- Si el contexto no cubre un aspecto del concepto, omítelo (no inventes)
+- El artículo debe ser completo y autocontenido para alguien que lo lee sin contexto adicional"""
 
-URL del documento fuente: {source_url}
+USER_PROMPT = """Escribe el artículo de wiki para el siguiente concepto:
 
-Contenido:
-{content}"""
+**Concepto**: {title}
+**Categoría**: {category}
+**Descripción breve**: {description}
+
+Usa los siguientes fragmentos del manual oficial como fuente de información:
+
+---
+{context}
+---
+
+Escribe el artículo completo ahora."""
+
+
+def _extract_passages(title: str, description: str, parsed_files: list[Path],
+                      max_chars: int = MAX_CONTEXT_CHARS) -> str:
+    """
+    Search parsed files for passages relevant to the given topic.
+    Uses simple keyword matching — no embeddings needed.
+    """
+    # Build search terms from title words (ignore very short words)
+    terms = [w.lower() for w in re.split(r'\W+', title + " " + description)
+             if len(w) > 3]
+
+    passages: list[tuple[int, str]] = []  # (score, passage)
+
+    for pf in parsed_files:
+        text = pf.read_text(encoding="utf-8")
+        # Split into paragraphs
+        paragraphs = re.split(r'\n{2,}', text)
+        for para in paragraphs:
+            if len(para.strip()) < 60:
+                continue
+            score = sum(1 for t in terms if t in para.lower())
+            if score > 0:
+                passages.append((score, para.strip()))
+
+    # Sort by relevance, deduplicate, cap total length
+    passages.sort(key=lambda x: -x[0])
+    seen: set[str] = set()
+    result_parts: list[str] = []
+    total = 0
+    for _, para in passages:
+        key = para[:80]
+        if key in seen:
+            continue
+        seen.add(key)
+        if total + len(para) > max_chars:
+            break
+        result_parts.append(para)
+        total += len(para)
+
+    return "\n\n".join(result_parts) if result_parts else "(no se encontraron pasajes relevantes en los documentos fuente)"
 
 
 def slugify(title: str) -> str:
-    """Convert a title to a safe filename (no path separators or shell-unsafe chars)."""
     safe = re.sub(r'[<>:"/\\|?*\n\r\x00/]', ' ', title)
     return safe.strip()
 
 
-def compile_wiki(force: bool = False):
+def compile_wiki(force: bool = False) -> None:
     WIKI_DIR.mkdir(parents=True, exist_ok=True)
 
-    parsed_files = list(PARSED_DIR.glob("*.md"))
+    if not TOPICS_FILE.exists():
+        print("  [llm] raw/topics.json not found. Run 'python pipeline.py compile' (discovery runs first).")
+        return
+
+    topics = json.loads(TOPICS_FILE.read_text(encoding="utf-8"))
+    parsed_files = sorted(PARSED_DIR.glob("*.md"))
+
     if not parsed_files:
-        print("  [llm] No parsed files found in raw/parsed/. Run 'python pipeline.py compile' with --parse first, or run 'python pipeline.py all'.")
+        print("  [llm] No parsed files found in raw/parsed/.")
         return
 
     client = instructor.from_openai(OpenAI())
+    total = len(topics)
 
-    for parsed_file in parsed_files:
-        source_name = parsed_file.stem
-        # Determine a plausible source URL based on the filename
-        if source_name.startswith("manual_renta"):
-            source_url = "https://www.agenciatributaria.es/AEAT.internet/Inicio/La_Agencia_Tributaria/Campanas/Renta/Renta.shtml"
-        elif "boe_" in source_name:
-            # Map region slugs back to the numeric page URLs used by scraper/boe.py
-            _boe_url_map = {
-                "madrid": "c16-1",
-                "cataluna": "c16-2",
-                "andalucia": "c16-3",
-                "valencia": "c16-4",
-            }
-            region = source_name.replace("boe_", "")
-            page = _boe_url_map.get(region, region)
-            source_url = f"https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2024/c16/{page}.html"
-        else:
-            source_url = "https://www.agenciatributaria.es"
+    for i, topic in enumerate(topics, 1):
+        filename = slugify(topic["title"]) + ".md"
+        output_path = WIKI_DIR / filename
 
-        content = parsed_file.read_text(encoding="utf-8")
-        # Split into chunks if too long
-        chunks = [content[i:i + MAX_CHUNK_CHARS] for i in range(0, len(content), MAX_CHUNK_CHARS)]
+        if output_path.exists() and not force:
+            print(f"  [llm] Skipping existing: {filename}")
+            continue
 
-        for chunk_idx, chunk in enumerate(chunks):
-            print(f"  [llm] Processing {source_name} chunk {chunk_idx + 1}/{len(chunks)} ...")
-            try:
-                articles = client.chat.completions.create(
-                    model="gpt-4o",
-                    response_model=List[WikiArticle],
-                    messages=[
-                        {"role": "system", "content": SYSTEM_PROMPT},
-                        {"role": "user", "content": USER_PROMPT_TEMPLATE.format(
-                            source_url=source_url,
-                            content=chunk,
-                        )},
-                    ],
-                    max_retries=2,
-                )
-            except Exception as e:
-                print(f"  [llm] WARNING: LLM call failed for {source_name} chunk {chunk_idx}: {e}")
-                continue
+        print(f"  [llm] [{i}/{total}] Writing: {topic['title']} ...")
 
-            for article in articles:
-                filename = slugify(article.title) + ".md"
-                output_path = WIKI_DIR / filename
+        # Only search source files that were flagged during discovery
+        relevant_files = [pf for pf in parsed_files
+                          if pf.stem in topic.get("sources", [])] or parsed_files
+        context = _extract_passages(topic["title"], topic.get("description", ""),
+                                    relevant_files)
 
-                if output_path.exists() and not force:
-                    print(f"  [llm] Skipping existing article: {filename}")
-                    continue
+        try:
+            article: WikiArticle = client.chat.completions.create(
+                model="gpt-4o",
+                response_model=WikiArticle,
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": USER_PROMPT.format(
+                        title=topic["title"],
+                        category=topic["category"],
+                        description=topic.get("description", ""),
+                        context=context,
+                    )},
+                ],
+                max_retries=2,
+            )
+        except Exception as e:
+            print(f"  [llm] WARNING: Failed to write {topic['title']}: {e}")
+            continue
 
-                frontmatter = {
-                    "title": article.title,
-                    "tags": article.tags,
-                    "source_url": article.source_url,
-                    "category": article.category,
-                }
-                file_content = "---\n" + yaml.dump(frontmatter, allow_unicode=True, default_flow_style=False) + "---\n\n" + article.content + "\n"
-                output_path.write_text(file_content, encoding="utf-8")
-                print(f"  [llm] -> {output_path}")
+        frontmatter = {
+            "title": article.title,
+            "tags": article.tags,
+            "source_url": SOURCE_BASE,
+            "category": topic["category"],
+        }
+        body = "---\n" + yaml.dump(frontmatter, allow_unicode=True,
+                                   default_flow_style=False) + "---\n\n"
+        body += article.content.strip() + "\n"
+        output_path.write_text(body, encoding="utf-8")
+        print(f"  [llm]   -> {output_path.name}")
