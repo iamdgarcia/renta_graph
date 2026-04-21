@@ -74,6 +74,32 @@ export function ApiKeyModal({ open, onKeySubmit, onShowDemo }: ApiKeyModalProps)
             Tu clave se guarda solo en tu navegador. Nunca llega a nuestros servidores.
           </Dialog.Description>
 
+          <p
+            className="mb-5 text-center text-xs"
+            style={{ color: 'var(--color-muted)' }}
+          >
+            Creado por{' '}
+            <a
+              href="https://github.com/iamdgarcia"
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-dotted underline-offset-4 transition-opacity hover:opacity-70"
+              style={{ color: 'var(--color-accent)' }}
+            >
+              @iamdgarcia
+            </a>{' '}
+            ·{' '}
+            <a
+              href="https://github.com/iamdgarcia/renta_graph"
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-dotted underline-offset-4 transition-opacity hover:opacity-70"
+              style={{ color: 'var(--color-accent)' }}
+            >
+              Ver repo
+            </a>
+          </p>
+
           {/* Provider selector */}
           <div className="mb-4 flex gap-2">
             {(['openai', 'anthropic'] as Provider[]).map((p) => (

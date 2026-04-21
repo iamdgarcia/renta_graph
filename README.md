@@ -9,6 +9,8 @@ An LLM-powered knowledge base for the Spanish *Declaración de la Renta*, implem
 
 > **Disclaimer:** Experimental AI knowledge base. Not financial or legal advice. Always consult the AEAT or a qualified *gestor*.
 
+![RentaGraph demo](images/example.gif)
+
 **[→ Live Demo](https://renta-graph.vercel.app)** — No API key needed for demo mode. Bring your own OpenAI or Anthropic key to ask your own questions.
 
 ---
